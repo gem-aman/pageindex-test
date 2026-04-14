@@ -1,0 +1,374 @@
+[
+  {
+    "scores": {
+      "must_contain": 5.0,
+      "cross_doc": 5.0,
+      "procedural": 5.0,
+      "specificity": 5.0,
+      "length_adequacy": 5.0,
+      "overall": 5.0
+    },
+    "found_terms": [
+      "jenkins",
+      "pipeline",
+      "terraform",
+      "apply",
+      "vault"
+    ],
+    "missing_terms": [],
+    "docs_hit": [
+      "jenkins-pipeline.md",
+      "vault-secrets.md",
+      "terraform-modules.md"
+    ],
+    "docs_missed": [],
+    "source_files": [
+      "flyway-migrations.md",
+      "terraform-modules.md",
+      "vault-secrets.md",
+      "jenkins-pipeline.md",
+      "azure-infrastructure.md"
+    ],
+    "word_count": 437,
+    "issues": [],
+    "pass": true,
+    "elapsed_sec": 49.5,
+    "question": "how do I deploy to production?",
+    "id": "Q1",
+    "category": "simple-vague"
+  },
+  {
+    "scores": {
+      "must_contain": 5.0,
+      "cross_doc": 5.0,
+      "procedural": 4.0,
+      "specificity": 5.0,
+      "length_adequacy": 5.0,
+      "overall": 4.8
+    },
+    "found_terms": [
+      "vault",
+      "sql_admin|secret/azure-sql|azure-sql",
+      "key vault"
+    ],
+    "missing_terms": [],
+    "docs_hit": [
+      "azure-infrastructure.md",
+      "vault-secrets.md"
+    ],
+    "docs_missed": [],
+    "source_files": [
+      "flyway-migrations.md",
+      "terraform-modules.md",
+      "vault-secrets.md",
+      "jenkins-pipeline.md",
+      "azure-infrastructure.md"
+    ],
+    "word_count": 256,
+    "issues": [],
+    "pass": true,
+    "elapsed_sec": 39.5,
+    "question": "where are the database passwords stored?",
+    "id": "Q2",
+    "category": "simple-lookup"
+  },
+  {
+    "scores": {
+      "must_contain": 5.0,
+      "cross_doc": 5.0,
+      "procedural": 5.0,
+      "specificity": 5.0,
+      "length_adequacy": 5.0,
+      "overall": 5.0
+    },
+    "found_terms": [
+      "flyway",
+      "migration",
+      "V",
+      "sql"
+    ],
+    "missing_terms": [],
+    "docs_hit": [
+      "jenkins-pipeline.md",
+      "vault-secrets.md",
+      "flyway-migrations.md"
+    ],
+    "docs_missed": [],
+    "source_files": [
+      "flyway-migrations.md",
+      "terraform-modules.md",
+      "vault-secrets.md",
+      "jenkins-pipeline.md",
+      "azure-infrastructure.md"
+    ],
+    "word_count": 386,
+    "issues": [],
+    "pass": true,
+    "elapsed_sec": 50.0,
+    "question": "how to add a new database table",
+    "id": "Q3",
+    "category": "procedural"
+  },
+  {
+    "scores": {
+      "must_contain": 5.0,
+      "cross_doc": 5.0,
+      "procedural": 5.0,
+      "specificity": 5.0,
+      "length_adequacy": 5.0,
+      "overall": 5.0
+    },
+    "found_terms": [
+      "terraform",
+      "resource group",
+      "vault",
+      "flyway",
+      "aks",
+      "jenkins"
+    ],
+    "missing_terms": [],
+    "docs_hit": [
+      "flyway-migrations.md",
+      "terraform-modules.md",
+      "vault-secrets.md",
+      "jenkins-pipeline.md",
+      "azure-infrastructure.md"
+    ],
+    "docs_missed": [],
+    "source_files": [
+      "flyway-migrations.md",
+      "terraform-modules.md",
+      "vault-secrets.md",
+      "jenkins-pipeline.md",
+      "azure-infrastructure.md"
+    ],
+    "word_count": 473,
+    "issues": [],
+    "pass": true,
+    "elapsed_sec": 67.2,
+    "question": "I need to set up a brand new environment from scratch, what's the full process?",
+    "id": "Q4",
+    "category": "cross-cutting"
+  },
+  {
+    "scores": {
+      "must_contain": 5.0,
+      "cross_doc": 5.0,
+      "procedural": 5.0,
+      "specificity": 5.0,
+      "length_adequacy": 5.0,
+      "overall": 5.0
+    },
+    "found_terms": [
+      "vnet",
+      "subnet"
+    ],
+    "missing_terms": [],
+    "docs_hit": [
+      "azure-infrastructure.md",
+      "terraform-modules.md"
+    ],
+    "docs_missed": [],
+    "source_files": [
+      "flyway-migrations.md",
+      "terraform-modules.md",
+      "vault-secrets.md",
+      "jenkins-pipeline.md",
+      "azure-infrastructure.md"
+    ],
+    "word_count": 320,
+    "issues": [],
+    "pass": true,
+    "elapsed_sec": 41.4,
+    "question": "what's the networking setup?",
+    "id": "Q5",
+    "category": "simple-lookup"
+  },
+  {
+    "scores": {
+      "must_contain": 5.0,
+      "cross_doc": 5.0,
+      "procedural": 5.0,
+      "specificity": 4.0,
+      "length_adequacy": 5.0,
+      "overall": 4.8
+    },
+    "found_terms": [
+      "flyway",
+      "connection",
+      "vault",
+      "jenkins"
+    ],
+    "missing_terms": [],
+    "docs_hit": [
+      "jenkins-pipeline.md",
+      "vault-secrets.md",
+      "flyway-migrations.md"
+    ],
+    "docs_missed": [],
+    "source_files": [
+      "flyway-migrations.md",
+      "terraform-modules.md",
+      "vault-secrets.md",
+      "jenkins-pipeline.md",
+      "azure-infrastructure.md"
+    ],
+    "word_count": 282,
+    "issues": [],
+    "pass": true,
+    "elapsed_sec": 35.0,
+    "question": "flyway migration failed in CI, what do I check?",
+    "id": "Q6",
+    "category": "troubleshooting"
+  },
+  {
+    "scores": {
+      "must_contain": 5.0,
+      "cross_doc": 5.0,
+      "procedural": 5.0,
+      "specificity": 5.0,
+      "length_adequacy": 5.0,
+      "overall": 5.0
+    },
+    "found_terms": [
+      "vault",
+      "csi",
+      "key vault",
+      "kubernetes"
+    ],
+    "missing_terms": [],
+    "docs_hit": [
+      "azure-infrastructure.md",
+      "vault-secrets.md",
+      "terraform-modules.md"
+    ],
+    "docs_missed": [],
+    "source_files": [
+      "flyway-migrations.md",
+      "terraform-modules.md",
+      "vault-secrets.md",
+      "jenkins-pipeline.md",
+      "azure-infrastructure.md"
+    ],
+    "word_count": 417,
+    "issues": [],
+    "pass": true,
+    "elapsed_sec": 62.5,
+    "question": "how does the app get secrets at runtime in kubernetes?",
+    "id": "Q7",
+    "category": "cross-cutting"
+  },
+  {
+    "scores": {
+      "must_contain": 3.3,
+      "cross_doc": 5.0,
+      "procedural": 1.0,
+      "specificity": 5.0,
+      "length_adequacy": 5.0,
+      "overall": 3.9
+    },
+    "found_terms": [
+      "monitor",
+      "alert"
+    ],
+    "missing_terms": [
+      "log.analytics|log analytics"
+    ],
+    "docs_hit": [
+      "azure-infrastructure.md",
+      "terraform-modules.md"
+    ],
+    "docs_missed": [],
+    "source_files": [
+      "jenkins-pipeline.md",
+      "azure-infrastructure.md",
+      "vault-secrets.md",
+      "terraform-modules.md"
+    ],
+    "word_count": 306,
+    "issues": [
+      "MISSING terms: ['log.analytics|log analytics']"
+    ],
+    "pass": false,
+    "elapsed_sec": 38.3,
+    "question": "tell me about monitoring and alerts",
+    "id": "Q8",
+    "category": "simple-vague"
+  },
+  {
+    "scores": {
+      "must_contain": 5.0,
+      "cross_doc": 5.0,
+      "procedural": 5.0,
+      "specificity": 3.3,
+      "length_adequacy": 5.0,
+      "overall": 4.7
+    },
+    "found_terms": [
+      "vault",
+      "rotation",
+      "credential"
+    ],
+    "missing_terms": [],
+    "docs_hit": [
+      "jenkins-pipeline.md",
+      "azure-infrastructure.md",
+      "vault-secrets.md",
+      "flyway-migrations.md"
+    ],
+    "docs_missed": [],
+    "source_files": [
+      "flyway-migrations.md",
+      "terraform-modules.md",
+      "vault-secrets.md",
+      "jenkins-pipeline.md",
+      "azure-infrastructure.md"
+    ],
+    "word_count": 369,
+    "issues": [],
+    "pass": true,
+    "elapsed_sec": 36.6,
+    "question": "how to rotate the sql database admin password without downtime",
+    "id": "Q9",
+    "category": "procedural-complex"
+  },
+  {
+    "scores": {
+      "must_contain": 3.3,
+      "cross_doc": 5.0,
+      "procedural": 5.0,
+      "specificity": 5.0,
+      "length_adequacy": 5.0,
+      "overall": 4.7
+    },
+    "found_terms": [
+      "resource_group",
+      "networking",
+      "aks",
+      "key_vault"
+    ],
+    "missing_terms": [
+      "acr",
+      "sql_database"
+    ],
+    "docs_hit": [
+      "terraform-modules.md"
+    ],
+    "docs_missed": [],
+    "source_files": [
+      "jenkins-pipeline.md",
+      "azure-infrastructure.md",
+      "vault-secrets.md",
+      "terraform-modules.md"
+    ],
+    "word_count": 299,
+    "issues": [
+      "MISSING terms: ['acr', 'sql_database']"
+    ],
+    "pass": false,
+    "elapsed_sec": 41.7,
+    "question": "what terraform modules do we have and what does each one do?",
+    "id": "Q10",
+    "category": "inventory"
+  }
+]

@@ -89,9 +89,15 @@ class MultiDocPageIndex:
         # section_slug -> (filename, line_num) for cross-ref resolution
         self.section_index: dict[str, tuple[str, int]] = {}
 
+    # Meta/documentation files to exclude from the RAG index
+    EXCLUDE_FILES = {"HOW_IT_WORKS.md", "README.md", "CHANGELOG.md"}
+
     def index_all(self):
         """Index all markdown files and build cross-reference map."""
-        md_files = sorted(self.docs_dir.glob("*.md"))
+        md_files = sorted(
+            f for f in self.docs_dir.glob("*.md")
+            if f.name not in self.EXCLUDE_FILES
+        )
         if not md_files:
             raise FileNotFoundError(f"No markdown files found in {self.docs_dir}")
 
@@ -162,60 +168,91 @@ class MultiDocPageIndex:
         slug = re.sub(r'[\s]+', '-', slug)
         return slug.strip('-')
 
-    def tree_search(self, query: str, max_sections: int = 8) -> list[dict]:
+    def tree_search(self, query: str, max_sections: int = 10) -> list[dict]:
         """
-        Programmatic tree search: find the most relevant sections across all documents.
+        Programmatic tree search with document diversity.
 
-        Uses the LLM to score section relevance based on the tree structure summaries,
-        then retrieves the actual content of the top sections.
+        Ranks sections PER DOCUMENT first (avoiding positional bias in long lists),
+        then interleaves top picks from each document for diversity.
         """
-        # Gather all sections with summaries across all documents
-        all_sections = []
+        # Gather sections grouped by document
+        doc_sections: dict[str, list[dict]] = {}
         for fname, doc_id in self.file_to_doc_id.items():
             structure_json = self.client.get_document_structure(doc_id)
             structure = json.loads(structure_json)
-            self._collect_sections(fname, doc_id, structure, all_sections)
+            sections = []
+            self._collect_sections(fname, doc_id, structure, sections)
+            # Filter out root nodes (depth=0) that are just the doc title
+            sections = [s for s in sections if s['depth'] > 0 or len(sections) <= 2]
+            doc_sections[fname] = sections
 
-        # Use LLM to rank sections by relevance
-        section_list_str = "\n".join(
-            f"{i+1}. [{s['filename']}] {s['title']} — {s['summary'][:100]}"
-            for i, s in enumerate(all_sections)
-        )
+        # Rank sections within each document using LLM
+        per_doc_ranked: dict[str, list[dict]] = {}
+        picks_per_doc = max(2, max_sections // len(doc_sections))  # At least 2 per doc
 
-        ranking_prompt = f"""Given this question: "{query}"
+        for fname, sections in doc_sections.items():
+            if not sections:
+                continue
+            section_list_str = "\n".join(
+                f"{i+1}. {s['title']} — {(s['summary'] or '')[:120]}"
+                for i, s in enumerate(sections)
+            )
 
-Here are sections from multiple technical documents. Return ONLY the numbers of the {max_sections} most relevant sections, separated by commas. Most relevant first.
+            ranking_prompt = f"""Question: "{query}"
+
+Below are sections from the document "{fname}". Pick the {picks_per_doc} sections most likely to contain information relevant to the question. Return ONLY their numbers, comma-separated, most relevant first.
+If NONE are relevant, respond with: NONE
 
 {section_list_str}
 
-Answer with ONLY comma-separated numbers (e.g., 3,7,1,15,4,12,8,2):"""
+Relevant section numbers:"""
 
-        try:
-            response = litellm.completion(
-                model=self.model,
-                messages=[{"role": "user", "content": ranking_prompt}],
-                temperature=0,
-                max_tokens=100,
-            )
-            ranking_text = response.choices[0].message.content.strip()
-            # Parse numbers
-            numbers = [int(n.strip()) for n in re.findall(r'\d+', ranking_text)]
-            # Get unique valid indices
-            seen = set()
-            selected_indices = []
-            for n in numbers:
-                idx = n - 1  # Convert to 0-indexed
-                if 0 <= idx < len(all_sections) and idx not in seen:
-                    seen.add(idx)
-                    selected_indices.append(idx)
-                    if len(selected_indices) >= max_sections:
-                        break
-        except Exception as e:
-            print(f"  Ranking error: {e}, using first {max_sections} sections")
-            selected_indices = list(range(min(max_sections, len(all_sections))))
+            try:
+                response = litellm.completion(
+                    model=self.model,
+                    messages=[{"role": "user", "content": ranking_prompt}],
+                    temperature=0,
+                    max_tokens=60,
+                )
+                ranking_text = response.choices[0].message.content.strip()
 
-        # Retrieve content for selected sections
-        selected = [all_sections[i] for i in selected_indices]
+                if "NONE" in ranking_text.upper():
+                    per_doc_ranked[fname] = []
+                    continue
+
+                numbers = [int(n.strip()) for n in re.findall(r'\d+', ranking_text)]
+                seen = set()
+                ranked = []
+                for n in numbers:
+                    idx = n - 1
+                    if 0 <= idx < len(sections) and idx not in seen:
+                        seen.add(idx)
+                        ranked.append(sections[idx])
+                        if len(ranked) >= picks_per_doc:
+                            break
+                per_doc_ranked[fname] = ranked
+            except Exception as e:
+                print(f"  Ranking error for {fname}: {e}")
+                per_doc_ranked[fname] = sections[:picks_per_doc]
+
+        # Interleave: round-robin from each document's ranked list for diversity
+        selected = []
+        selected_keys = set()
+        max_rounds = picks_per_doc
+        for round_idx in range(max_rounds):
+            for fname in doc_sections:
+                ranked = per_doc_ranked.get(fname, [])
+                if round_idx < len(ranked):
+                    s = ranked[round_idx]
+                    key = (s['doc_id'], s['line_num'])
+                    if key not in selected_keys:
+                        selected_keys.add(key)
+                        selected.append(s)
+                        if len(selected) >= max_sections:
+                            break
+            if len(selected) >= max_sections:
+                break
+
         return selected
 
     def _collect_sections(self, filename: str, doc_id: str, tree, sections: list, depth=0):
@@ -286,7 +323,7 @@ def retrieve_with_cross_refs(index: MultiDocPageIndex, query: str, verbose: bool
         print(f"\n  [1/4] Tree search across {len(index.file_to_doc_id)} documents...")
 
     # Step 1: Find relevant sections via tree search
-    relevant_sections = index.tree_search(query, max_sections=6)
+    relevant_sections = index.tree_search(query, max_sections=10)
 
     if verbose:
         print(f"  Found {len(relevant_sections)} relevant sections:")
@@ -351,7 +388,7 @@ def retrieve_with_cross_refs(index: MultiDocPageIndex, query: str, verbose: bool
                         print(f"    Followed: {part['filename']} -> {ref['target_file']}#{ref.get('target_section', '')}")
 
     # Limit cross-refs to avoid context overflow
-    cross_ref_parts = cross_ref_parts[:5]
+    cross_ref_parts = cross_ref_parts[:8]
 
     all_parts = context_parts + cross_ref_parts
 
